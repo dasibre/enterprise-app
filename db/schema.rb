@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_22_204610) do
+ActiveRecord::Schema.define(version: 2020_03_22_174323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2020_03_22_204610) do
     t.string "name", limit: 256, null: false
     t.integer "length_minutes", null: false
     t.string "rating", limit: 8, null: false
+    t.index ["name"], name: "movies_name_key", unique: true
   end
 
   create_table "orders", force: :cascade do |t|
