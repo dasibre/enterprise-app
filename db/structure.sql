@@ -99,6 +99,75 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: showtimes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.showtimes (
+    id bigint NOT NULL,
+    theatre_id bigint,
+    movie_id bigint,
+    auditorium character varying,
+    start_time timestamp without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: showtimes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.showtimes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: showtimes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.showtimes_id_seq OWNED BY public.showtimes.id;
+
+
+--
+-- Name: theatres; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.theatres (
+    id bigint NOT NULL,
+    name character varying(256),
+    address_line_1 character varying(256),
+    address_line_2 character varying(256),
+    address_city character varying(128),
+    address_state character varying(2),
+    address_zip_code character varying(9),
+    phone_number character varying(10)
+);
+
+
+--
+-- Name: theatres_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.theatres_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: theatres_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.theatres_id_seq OWNED BY public.theatres.id;
+
+
+--
 -- Name: movies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -110,6 +179,20 @@ ALTER TABLE ONLY public.movies ALTER COLUMN id SET DEFAULT nextval('public.movie
 --
 
 ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.orders_id_seq'::regclass);
+
+
+--
+-- Name: showtimes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.showtimes ALTER COLUMN id SET DEFAULT nextval('public.showtimes_id_seq'::regclass);
+
+
+--
+-- Name: theatres id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.theatres ALTER COLUMN id SET DEFAULT nextval('public.theatres_id_seq'::regclass);
 
 
 --
@@ -153,6 +236,36 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: showtimes showtimes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.showtimes
+    ADD CONSTRAINT showtimes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: theatres theatres_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.theatres
+    ADD CONSTRAINT theatres_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_showtimes_on_movie_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_showtimes_on_movie_id ON public.showtimes USING btree (movie_id);
+
+
+--
+-- Name: index_showtimes_on_theatre_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_showtimes_on_theatre_id ON public.showtimes USING btree (theatre_id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -160,6 +273,8 @@ SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20200315234751'),
-('20200322174323');
+('20200322174323'),
+('20200329223810'),
+('20200329225049');
 
 
