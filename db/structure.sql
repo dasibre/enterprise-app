@@ -35,7 +35,7 @@ CREATE TABLE public.movies (
     rating character varying(8) NOT NULL,
     CONSTRAINT movies_length_minutes_check CHECK ((length_minutes > 0)),
     CONSTRAINT movies_name_check CHECK ((length((name)::text) > 0)),
-    CONSTRAINT movies_rating_check CHECK (((rating)::text = ANY ((ARRAY['Unrated'::character varying, 'G'::character varying, 'PG'::character varying, 'PG-13'::character varying, 'R'::character varying, 'NC-17'::character varying])::text[])))
+    CONSTRAINT movies_rating_check CHECK (((rating)::text = ANY (ARRAY[('Unrated'::character varying)::text, ('G'::character varying)::text, ('PG'::character varying)::text, ('PG-13'::character varying)::text, ('R'::character varying)::text, ('NC-17'::character varying)::text])))
 );
 
 
@@ -104,12 +104,13 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.showtimes (
     id bigint NOT NULL,
-    theatre_id bigint,
-    movie_id bigint,
-    auditorium character varying,
+    theatre_id bigint NOT NULL,
+    movie_id bigint NOT NULL,
+    auditorium character varying(16) NOT NULL,
     start_time timestamp without time zone,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    CONSTRAINT aud_check CHECK ((length((auditorium)::text) > 5))
 );
 
 
@@ -266,6 +267,22 @@ CREATE INDEX index_showtimes_on_theatre_id ON public.showtimes USING btree (thea
 
 
 --
+-- Name: showtimes fk_rails_3fc119ff04; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.showtimes
+    ADD CONSTRAINT fk_rails_3fc119ff04 FOREIGN KEY (movie_id) REFERENCES public.movies(id);
+
+
+--
+-- Name: showtimes fk_rails_57092dd0fd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.showtimes
+    ADD CONSTRAINT fk_rails_57092dd0fd FOREIGN KEY (theatre_id) REFERENCES public.theatres(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -274,7 +291,8 @@ SET search_path TO "$user", public;
 INSERT INTO "schema_migrations" (version) VALUES
 ('20200315234751'),
 ('20200322174323'),
-('20200329223810'),
-('20200329225049');
+('20200413022325'),
+('20200413023123'),
+('20200413023303');
 
 
