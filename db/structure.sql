@@ -25,6 +25,38 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: auditoriums; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.auditoriums (
+    id bigint NOT NULL,
+    theatre_id bigint NOT NULL,
+    auditorium_identifier character varying NOT NULL,
+    seats_available integer NOT NULL,
+    CONSTRAINT aud_id_length_chk CHECK ((length((auditorium_identifier)::text) >= 1))
+);
+
+
+--
+-- Name: auditoriums_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.auditoriums_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: auditoriums_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.auditoriums_id_seq OWNED BY public.auditoriums.id;
+
+
+--
 -- Name: movies; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -198,6 +230,13 @@ ALTER SEQUENCE public.theatres_id_seq OWNED BY public.theatres.id;
 
 
 --
+-- Name: auditoriums id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auditoriums ALTER COLUMN id SET DEFAULT nextval('public.auditoriums_id_seq'::regclass);
+
+
+--
 -- Name: movies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -238,6 +277,14 @@ ALTER TABLE ONLY public.theatres ALTER COLUMN id SET DEFAULT nextval('public.the
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: auditoriums auditoriums_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auditoriums
+    ADD CONSTRAINT auditoriums_pkey PRIMARY KEY (id);
 
 
 --
@@ -297,6 +344,20 @@ ALTER TABLE ONLY public.theatres
 
 
 --
+-- Name: index_auditoriums_on_auditorium_identifier_and_theatre_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_auditoriums_on_auditorium_identifier_and_theatre_id ON public.auditoriums USING btree (auditorium_identifier, theatre_id);
+
+
+--
+-- Name: index_auditoriums_on_theatre_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_auditoriums_on_theatre_id ON public.auditoriums USING btree (theatre_id);
+
+
+--
 -- Name: index_showtimes_on_movie_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -349,6 +410,14 @@ ALTER TABLE ONLY public.showtimes
 
 
 --
+-- Name: auditoriums fk_rails_79378626f4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.auditoriums
+    ADD CONSTRAINT fk_rails_79378626f4 FOREIGN KEY (theatre_id) REFERENCES public.theatres(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -363,6 +432,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200413034419'),
 ('20200413041547'),
 ('20200413155401'),
-('20200413161824');
+('20200413161824'),
+('20200415021642');
 
 
