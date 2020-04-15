@@ -32,10 +32,9 @@ CREATE TABLE public.movies (
     id integer NOT NULL,
     name character varying(256) NOT NULL,
     length_minutes integer NOT NULL,
-    rating character varying(8) NOT NULL,
+    rating_id integer NOT NULL,
     CONSTRAINT movies_length_minutes_check CHECK ((length_minutes > 0)),
-    CONSTRAINT movies_name_check CHECK ((length((name)::text) > 0)),
-    CONSTRAINT movies_rating_check CHECK (((rating)::text = ANY (ARRAY[('Unrated'::character varying)::text, ('G'::character varying)::text, ('PG'::character varying)::text, ('PG-13'::character varying)::text, ('R'::character varying)::text, ('NC-17'::character varying)::text])))
+    CONSTRAINT movies_name_check CHECK ((length((name)::text) > 0))
 );
 
 
@@ -87,6 +86,36 @@ CREATE SEQUENCE public.orders_id_seq
 --
 
 ALTER SEQUENCE public.orders_id_seq OWNED BY public.orders.id;
+
+
+--
+-- Name: ratings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ratings (
+    id bigint NOT NULL,
+    name character varying,
+    description character varying
+);
+
+
+--
+-- Name: ratings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.ratings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: ratings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.ratings_id_seq OWNED BY public.ratings.id;
 
 
 --
@@ -183,6 +212,13 @@ ALTER TABLE ONLY public.orders ALTER COLUMN id SET DEFAULT nextval('public.order
 
 
 --
+-- Name: ratings id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ratings ALTER COLUMN id SET DEFAULT nextval('public.ratings_id_seq'::regclass);
+
+
+--
 -- Name: showtimes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -229,6 +265,14 @@ ALTER TABLE ONLY public.orders
 
 
 --
+-- Name: ratings ratings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ratings
+    ADD CONSTRAINT ratings_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -267,6 +311,28 @@ CREATE INDEX index_showtimes_on_theatre_id ON public.showtimes USING btree (thea
 
 
 --
+-- Name: showtimes_start_time_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX showtimes_start_time_idx ON public.showtimes USING btree (start_time);
+
+
+--
+-- Name: theatres_zip_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX theatres_zip_idx ON public.theatres USING btree (address_zip_code);
+
+
+--
+-- Name: movies fk_movie_rating_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.movies
+    ADD CONSTRAINT fk_movie_rating_id FOREIGN KEY (rating_id) REFERENCES public.ratings(id);
+
+
+--
 -- Name: showtimes fk_rails_3fc119ff04; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -293,6 +359,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200322174323'),
 ('20200413022325'),
 ('20200413023123'),
-('20200413023303');
+('20200413023303'),
+('20200413034419'),
+('20200413041547'),
+('20200413155401'),
+('20200413161824');
 
 

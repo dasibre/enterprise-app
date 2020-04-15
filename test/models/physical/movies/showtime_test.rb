@@ -1,22 +1,7 @@
 require "test_helper"
 require "pry-rails"
 
-# module DBTestHelper
-#   def test_for_db_error(error_msg, &block)
-#     begin
-#       block.call
-#     rescue ActiveRecord::StatementInvalid
-#       database_threw_error = true
-#     rescue
-#       something_else_threw_error = true
-#     end
-#     assert !something_else_threw_error, "There is an error in our test code"
-#     assert database_threw_error && !something_else_threw_error, error_msg
-#   end
-# end
-
 class Physical::Movies::ShowtimeTest < ActiveSupport::TestCase
-
   describe "Showtime" do
     before do
       @theatre = Physical::Movies::Theatre.create!(
@@ -29,8 +14,8 @@ class Physical::Movies::ShowtimeTest < ActiveSupport::TestCase
           )
       @movie = Physical::Movies::Movie.create!(
           name: "Matrix",
-          rating: "PG",
           length_minutes: "10",
+          rating: Physical::Movies::Rating.new(name: "PG")
       )
     end
 
@@ -56,7 +41,7 @@ class Physical::Movies::ShowtimeTest < ActiveSupport::TestCase
 
     describe "Database layer referential tests" do
       it "does not allow save with no movie" do
-        test_for_db_error "Database allowed save with no movie" do
+        custom_test_for_db_error "Database allowed save with no movie" do
           st = Physical::Movies::Showtime.new(
               theatre: @theatre,
               auditorium: '1',
@@ -67,7 +52,7 @@ class Physical::Movies::ShowtimeTest < ActiveSupport::TestCase
       end
 
       it "does not allow save with no theatre" do
-        test_for_db_error "Database allowed save with no theatre" do
+        custom_test_for_db_error "Database allowed save with no theatre" do
           st = Physical::Movies::Showtime.new(
               movie: @movie,
               auditorium: '1',
@@ -77,19 +62,5 @@ class Physical::Movies::ShowtimeTest < ActiveSupport::TestCase
         end
       end
     end
-  end
-
-  protected
-
-  def test_for_db_error(error_msg, &block)
-    begin
-      yield
-    rescue ActiveRecord::StatementInvalid
-      database_threw_error = true
-    rescue
-      something_else_threw_error = true
-    end
-    assert !something_else_threw_error, "There is an error in our test code"
-    assert database_threw_error && !something_else_threw_error, error_msg
   end
 end
